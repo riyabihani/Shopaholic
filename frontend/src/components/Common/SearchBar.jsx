@@ -18,6 +18,7 @@ const SearchBar = () => {
     return (
         <div className={`flex items-center justify-center w-full transition-all duration-300 ${isOpen ? 'absolute top-0 left-0 bg-white h-24 z-50' : 'w-auto'}`}>
             {isOpen ? (
+            // To Submit Search
                 <form onSubmit={handleSearch} className='relative flex items-center justify-center w-full'>
                     <div className='relative w-1/2'>
                         <input 
@@ -30,18 +31,17 @@ const SearchBar = () => {
                             <HiMagnifyingGlass className='h-6 w-6' />
                         </button>
                     </div>
+                    {/* To Get Out of Searching */}
                     <button onClick={handleSearchToggle} type='button' className='absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800'>
                         <HiMiniXMark className='h-6 w-6' />
                     </button>
                 </form>
-                
-
             ) : (
+                // When Search Icon is Clicked
                 <button onClick={handleSearchToggle}>
                     <HiMagnifyingGlass className='h-6 w-6 text-gray-700' />
                 </button>
             )}
-
         </div>
     )
 }
