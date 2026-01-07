@@ -1,8 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv")
+// const dotenv = require("dotenv")
 const connectDB = require("./config/db");
-const userRoutes = require("./routes/userRoutes")
+const userRoutes = require("./routes/userRoutes");
+const productRoutes = require("./routes/productRoutes")
 
 const app = express();
 // ensure that our app is able to work with JSON data 
@@ -10,7 +13,6 @@ app.use(express.json());
 // communicate with React server
 app.use(cors());
 
-dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
@@ -21,7 +23,8 @@ app.get("/", (req, res) => {
 });
 
 // API routes
-app.use('/api/users', userRoutes) // will append /api/users to all user routes
+app.use('/api/users', userRoutes); // will append /api/users to all user routes
+app.use('/api/products', productRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
