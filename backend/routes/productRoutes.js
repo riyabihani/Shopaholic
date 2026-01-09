@@ -15,7 +15,7 @@ router.post('/', protect, admin, async (req, res) => {
         const product = new Product({ name, description, price, discountPrice, countInStock, category, brand, sizes, colors, collections, material, gender, images, isFeatured, isPublished, tags, dimensions, weight, sku, user: req.user._id }); // admin user creating the product
 
         const createdProduct = await product.save();
-        res .status(201).json(createdProduct);
+        res.status(201).json(createdProduct);
     } catch (error) {
         console.error(error);
         res.status(500).send("Server Error");
@@ -75,7 +75,7 @@ router.delete('/:id', protect, admin, async (req, res) => {
         if (product) {
             // remove the product from the DB
             await product.deleteOne();
-            res.jsonp({ message: "Product removed" })
+            res.json({ message: "Product removed" })
         } else {
             res.status(404).json({ message: "Product not found "});
         }
