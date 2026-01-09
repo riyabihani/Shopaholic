@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
             })
         });
     } catch(err) {
-        console.log(err);
+        console.error(err);
         res.status(500).send("Server error")
     }
 });
