@@ -45,18 +45,18 @@ const Checkout = () => {
         navigate("/order-confirmation");
     }
 
-    const handleSimulatePayment = () => {
-        const fakeDetails = {
-        id: "SIMULATED_ORDER_123",
-        status: "COMPLETED",
-        payer: { email_address: "user@example.com" },
-        purchase_units: [{ amount: { value: String(cart.totalPrice), currency_code: "USD" } }],
-        shippingAddress,
-        cart,
-        createdAt: new Date().toISOString(),
-        }
-        handlePaymentSuccess(fakeDetails)
-    }
+    // const handleSimulatePayment = () => {
+    //     const fakeDetails = {
+    //     id: "SIMULATED_ORDER_123",
+    //     status: "COMPLETED",
+    //     payer: { email_address: "user@example.com" },
+    //     purchase_units: [{ amount: { value: String(cart.totalPrice), currency_code: "USD" } }],
+    //     shippingAddress,
+    //     cart,
+    //     createdAt: new Date().toISOString(),
+    //     }
+    //     handlePaymentSuccess(fakeDetails)
+    // }
 
     return (
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter'>
@@ -134,13 +134,13 @@ const Checkout = () => {
                             <button type='submit' className='w-full bg-black text-white py-3 rounded'>Continue to Payment</button>
                         ) : (
                             <div>
-                                {/* <h3 className='text-lg mb-4'>Pay with Paypal</h3> */}
+                                <h3 className='text-lg mb-4'>Pay with Paypal</h3>
                                 {/* Paypal Component */}
-                                {/* <PayPalButton amount={100} onSuccess={handlePaymentSuccess} onError={(err) => alert("Payment failed. Try again!")} /> */}
+                                <PayPalButton amount={100} onSuccess={handlePaymentSuccess} onError={(err) => alert("Payment failed. Try again!")} />
                                 <h3 className='text-lg mb-4'>Payment</h3>
-                                <button type="button" onClick={handleSimulatePayment} className='w-full bg-green-600 text-white py-3 rounded'>
+                                {/* <button type="button" onClick={handleSimulatePayment} className='w-full bg-green-600 text-white py-3 rounded'>
                                 Simulate Payment Success
-                                </button>
+                                </button> */}
                             </div>
                         )}
                     </div>
