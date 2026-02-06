@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { act } from 'react';
 
 // helper function to load cart from localStorage
 const loadCartFromStorage = () => {

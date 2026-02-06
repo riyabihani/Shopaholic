@@ -1,26 +1,25 @@
 import {
   createSlice,
-  createAsyncThunk,
-  __DO_NOT_USE__ActionTypes,
+  createAsyncThunk
 } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // fetch all orders (admin only)
 export const fetchAllOrders = createAsyncThunk(
   "adminOrders/fetchAllOrders",
-  async (__DO_NOT_USE__ActionTypes, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         },
       );
-      return response;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data);
     }
   },
 );
@@ -39,16 +38,16 @@ export const updateOrderStatus = createAsyncThunk(
           },
         },
       );
-      return response;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data);
     }
   },
 );
 
 // delete an order (admin only)
 export const deleteOrder = createAsyncThunk(
-  "adminOrders/updateOrderStatus",
+  "adminOrders/deleteOrder",
   async ({ id }, { rejectWithValue }) => {
     try {
       await axios.delete(
@@ -61,7 +60,7 @@ export const deleteOrder = createAsyncThunk(
       );
       return id;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data);
     }
   },
 );
@@ -84,21 +83,22 @@ const adminOrderSlice = createSlice({
       })
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.orders = action.payload;
         state.totalOrders = action.payload.length;
         // calculate total sales
         const totalSales = action.payload.reduce((acc, order) => {
-          return acc + order.totalPrice;
+          return acc + order?.totalPrice;
         }, 0);
         state.totalSales = totalSales;
+        state.error = null;
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action.payload.message || "Failed...";
       })
 
       // update order status
-      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
         const updatedOrder = action.payload;
         const orderIndex = state.orders.findIndex(
           (order) => order._id === updatedOrder._id,
@@ -109,7 +109,7 @@ const adminOrderSlice = createSlice({
       })
 
       // delete order
-      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+      .addCase(deleteOrder.fulfilled, (state, action) => {
         state.orders = state.orders.filter((order) => order._id !== action.payload)
       });
   },

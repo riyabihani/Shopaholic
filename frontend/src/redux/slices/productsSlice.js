@@ -10,8 +10,8 @@ export const fetchProductsByFilters = createAsyncThunk("products/fetchByFilters"
         if (size) query.append("size", size);
         if (color) query.append("color", color);
         if (gender) query.append("gender", gender);
-        if (minPrice) query.append("minPrice", minPrice);
-        if (maxPrice) query.append("maxPrice", maxPrice);
+        if (minPrice !== "" && minPrice !== null && minPrice !== undefined) query.append("minPrice", minPrice);
+        if (maxPrice !== "" && maxPrice !== null && maxPrice !== undefined) query.append("maxPrice", maxPrice);
         if (sortBy) query.append("sortBy", sortBy);
         if (search) query.append("search", search);
         if (category) query.append("category", category);

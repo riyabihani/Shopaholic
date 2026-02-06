@@ -2,14 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}`;
-const USER_TOKEN = `Bearer ${localStorage.getItem("userToken")}`;
+const authHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+});
+
 
 // async thunk to fetch admin products
 export const fetchAdminProducts = createAsyncThunk("adminProducts/fetchProducts", async () => {
-    const response = await axios.get(`${API_URL}/api/admin/products}`, {
-            headers: {
-                Authorization: USER_TOKEN,
-            }
+    const response = await axios.get(`${API_URL}/api/admin/products`, {
+            headers: authHeader()
         }
     );
     return response.data;
@@ -17,10 +18,8 @@ export const fetchAdminProducts = createAsyncThunk("adminProducts/fetchProducts"
 
 // async thunk to create a new product
 export const createProduct = createAsyncThunk("adminProducts/createProduct", async (productData) => {
-    const response = await axios.post(`${API_URL}/api/admin/products}`, productData, {
-            headers: {
-                Authorization: USER_TOKEN,
-            }
+    const response = await axios.post(`${API_URL}/api/admin/products`, productData, {
+            headers: authHeader()
         }
     );
     return response.data;
@@ -28,11 +27,11 @@ export const createProduct = createAsyncThunk("adminProducts/createProduct", asy
 
 // async thunk to update an existing product
 export const updateProduct = createAsyncThunk("adminProducts/updateProduct", async ({id, productData}) => {
-    const response = await axios.put(`${API_URL}/api/admin/products/${id}`, productData, {
-            headers: {
-                Authorization: USER_TOKEN,
-            }
-        }
+    const response = await axios.put(
+      `${API_URL}/api/admin/products/${id}`,
+      productData, {
+        headers: authHeader(),
+      },
     );
     return response.data;
 });
@@ -40,17 +39,14 @@ export const updateProduct = createAsyncThunk("adminProducts/updateProduct", asy
 
 // async thunk to delete product
 export const deleteProduct = createAsyncThunk("adminProducts/deleteProduct", async (id) => {
-    await axios.post(`${API_URL}/api/admin/products/${id}`, productData, {
-            headers: {
-                Authorization: USER_TOKEN,
-            }
-        }
-    );
+    await axios.post(`${API_URL}/api/admin/products/${id}`, {
+      headers: authHeader(),
+    });
     return id;
 });
 
 const adminProductSlice = createSlice({
-    name: "adminProduct",
+    name: "adminProducts",
     initialState: {
         products: [],
         loading: false,

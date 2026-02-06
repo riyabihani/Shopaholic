@@ -3,7 +3,7 @@ import axios from "axios";
 
 // async thunk to fetch all users (admin only)
 export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
-    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users}`, {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("userToken")}`,
             }
@@ -15,7 +15,7 @@ export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
 // async thunk to add the create user actions
 export const addUser = createAsyncThunk("admin/addUser", async (userData, { rejectWithValue }) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users}`, userData, {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`, userData, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("userToken")}`,
             }
@@ -27,7 +27,7 @@ export const addUser = createAsyncThunk("admin/addUser", async (userData, { reje
 });
 
 // async thunk to update user info
-export const updateUser = createAsyncThunk("admin/updateUser", async ({ id, naem, email, role }) => {
+export const updateUser = createAsyncThunk("admin/updateUser", async ({ id, name, email, role }) => {
     const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`, { name, email, role }, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -67,7 +67,7 @@ const adminSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         })
-        .addCase(fetchUsers.fulfilled, (state, action) => {
+        .addCase(updateUser.fulfilled, (state, action) => {
             const updatedUser = action.payload;
             const userIndex = state.users.findIndex((user) => user._id === updatedUser._id);
             if (userIndex !== -1) {
@@ -83,7 +83,7 @@ const adminSlice = createSlice({
         })
         .addCase(addUser.fulfilled, (state, action) => {
             state.loading = false;
-            state.users.push(action.payload.user);
+            state.users.push(action.payload.user || action.payload);
         })
         .addCase(addUser.rejected, (state, action) => {
             state.loading = false;
