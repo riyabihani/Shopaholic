@@ -1,48 +1,64 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchUserOrders } from "../redux/slices/orderSlice"
 
 const MyOrdersPage = () => {
-    const [orders, setOrders] = useState([]);
+    // const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {orders, loading, error} = useSelector((state) => state.orders);
 
     useEffect(() => {
-        // to simulate fetching orders
-        setTimeout(() => {
-            const mockOrders = [
-                {
-                    _id: '12345',
-                    createdAt: new Date(),
-                    shippingAddress: {city: 'New York', country: 'USA'},
-                    orderItems: [
-                        {
-                            name: "Product 1",
-                            image: "https://picsum.photos/500/500?random=1"
-                        }
-                    ],
-                    totalPrice: 100, 
-                    isPaid: true
-                },
-                {
-                    _id: '23456',
-                    createdAt: new Date(),
-                    shippingAddress: {city: 'New York', country: 'USA'},
-                    orderItems: [
-                        {
-                            name: "Product 2",
-                            image: "https://picsum.photos/500/500?random=2"
-                        }
-                    ],
-                    totalPrice: 100, 
-                    isPaid: false
-                }
-            ];
-            setOrders(mockOrders);
-        }, 1000);
-    }, []);
+        dispatch(fetchUserOrders());
+    }, [dispatch])
+
+    // useEffect(() => {
+    //     // to simulate fetching orders
+    //     setTimeout(() => {
+    //         const mockOrders = [
+    //             {
+    //                 _id: '12345',
+    //                 createdAt: new Date(),
+    //                 shippingAddress: {city: 'New York', country: 'USA'},
+    //                 orderItems: [
+    //                     {
+    //                         name: "Product 1",
+    //                         image: "https://picsum.photos/500/500?random=1"
+    //                     }
+    //                 ],
+    //                 totalPrice: 100, 
+    //                 isPaid: true
+    //             },
+    //             {
+    //                 _id: '23456',
+    //                 createdAt: new Date(),
+    //                 shippingAddress: {city: 'New York', country: 'USA'},
+    //                 orderItems: [
+    //                     {
+    //                         name: "Product 2",
+    //                         image: "https://picsum.photos/500/500?random=2"
+    //                     }
+    //                 ],
+    //                 totalPrice: 100, 
+    //                 isPaid: false
+    //             }
+    //         ];
+    //         setOrders(mockOrders);
+    //     }, 1000);
+    // }, []);
 
     const handleRowClick = (orderId) => {
         navigate(`/order/${orderId}`)
     };
+
+    if (loading) {
+        return <p>Loading...</p>
+    };
+
+    if (error) {
+        return <p>Error: {error}</p>
+    }
 
     return (
         <div className='max-w-7xl mx-auto p-4 sm:p-6'>
@@ -77,7 +93,7 @@ const MyOrdersPage = () => {
                                         {order.shippingAddress ? `${order.shippingAddress.city}, ${order.shippingAddress.country}` : "N/A"}
                                     </td>
                                     <td className='py-2 px-2 sm:py-4 sm:px-4'>#{order.orderItems.length}</td>
-                                    <td className='py-2 px-2 sm:py-4 sm:px-4'>#{order.totalPrice}</td>
+                                    <td className='py-2 px-2 sm:py-4 sm:px-4'>${Number(order.totalPrice).toFixed(2)}</td>
                                     <td className='py-2 px-2 sm:py-4 sm:px-4'>
                                         <span className={`${order.isPaid ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} px-2 py-1 rounded-full text-xs sm:text-sm font-medium`}>{order.isPaid ? "Paid" : "Pending"}</span>
                                     </td>

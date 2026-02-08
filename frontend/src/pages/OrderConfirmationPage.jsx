@@ -1,36 +1,52 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { clearCart } from '../redux/slices/cartSlice';
 
-const checkout = {
-    _id: '12323',
-    createdAt: new Date(),
-    checkoutItems: [
-        {
-            productId: 1,
-            name: "Jacket",
-            color: 'Black', 
-            size: "M",
-            price: 150,
-            quantity: 1,
-            image: "https://picsum.photos/150?random=1"
-        },
-        {
-            productId: 2,
-            name: "T-shirt",
-            color: 'Red', 
-            size: "M",
-            price: 50,
-            quantity: 2,
-            image: "https://picsum.photos/150?random=2"
-        }
-    ],
-    shippingAddress: {
-        address: "123 Fashion Street",
-        city: "New York", 
-        country: "USA"
-    }
-}
+// const checkout = {
+//     _id: '12323',
+//     createdAt: new Date(),
+//     checkoutItems: [
+//         {
+//             productId: 1,
+//             name: "Jacket",
+//             color: 'Black', 
+//             size: "M",
+//             price: 150,
+//             quantity: 1,
+//             image: "https://picsum.photos/150?random=1"
+//         },
+//         {
+//             productId: 2,
+//             name: "T-shirt",
+//             color: 'Red', 
+//             size: "M",
+//             price: 50,
+//             quantity: 2,
+//             image: "https://picsum.photos/150?random=2"
+//         }
+//     ],
+//     shippingAddress: {
+//         address: "123 Fashion Street",
+//         city: "New York", 
+//         country: "USA"
+//     }
+// }
 
 const OrderConfirmationPage = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const {checkout} = useSelector((state) => state.checkout);
+
+    // clear cart when order confirmed
+    useEffect(() => {
+        if (checkout && checkout._id) {
+            dispatch((clearCart()));
+            localStorage.removeItem("cart");
+        } else {
+            navigate("/my-orders")
+        }
+    }, [checkout, dispatch, navigate]);
 
     const calculatedEstimatedDelivery = (createdAt) => {
         const orderDate = new Date(createdAt);

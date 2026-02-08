@@ -18,7 +18,7 @@ export const fetchAdminProducts = createAsyncThunk("adminProducts/fetchProducts"
 
 // async thunk to create a new product
 export const createProduct = createAsyncThunk("adminProducts/createProduct", async (productData) => {
-    const response = await axios.post(`${API_URL}/api/admin/products`, productData, {
+    const response = await axios.post(`${API_URL}/api/products`, productData, {
             headers: authHeader()
         }
     );
@@ -28,7 +28,7 @@ export const createProduct = createAsyncThunk("adminProducts/createProduct", asy
 // async thunk to update an existing product
 export const updateProduct = createAsyncThunk("adminProducts/updateProduct", async ({id, productData}) => {
     const response = await axios.put(
-      `${API_URL}/api/admin/products/${id}`,
+      `${API_URL}/api/products/${id}`,
       productData, {
         headers: authHeader(),
       },
@@ -39,7 +39,7 @@ export const updateProduct = createAsyncThunk("adminProducts/updateProduct", asy
 
 // async thunk to delete product
 export const deleteProduct = createAsyncThunk("adminProducts/deleteProduct", async (id) => {
-    await axios.post(`${API_URL}/api/admin/products/${id}`, {
+    await axios.delete(`${API_URL}/api/products/${id}`, {
       headers: authHeader(),
     });
     return id;
