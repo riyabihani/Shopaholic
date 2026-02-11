@@ -14,6 +14,7 @@ const subscribeRoutes = require("./routes/subscribeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adminProductRoutes = require("./routes/adminProductRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 // ensure that our app is able to work with JSON data 
@@ -43,6 +44,8 @@ app.use('/api', subscribeRoutes);
 app.use('/api/admin/users', adminRoutes);
 app.use('/api/admin/products', adminProductRoutes);
 app.use('/api/admin/orders', adminOrderRoutes);
+
+app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

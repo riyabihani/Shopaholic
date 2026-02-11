@@ -1,0 +1,6 @@
+{
+  "embedding_backend": "sentence-transformers",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embed_dim": 384,
+  "count": 39
+}

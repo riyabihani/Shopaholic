@@ -5,6 +5,7 @@ import SearchBar from './SearchBar'
 import CartDrawer from '../Layout/CartDrawer'
 import { IoMdClose } from 'react-icons/io'
 import { useSelector } from 'react-redux'
+import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 
 const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,6 +43,8 @@ const Navbar = () => {
                 <div className='flex items-center space-x-4'>
                     {/* Admin */}
                     {user && user.role === "admin" && (<Link to='/admin' className='block bg-black px-2 rounded text-sm text-white'>Admin</Link>)}
+
+                    <Link to='/chatbot' className='hover:text-black'><IoChatbubbleEllipsesOutline className='h-6 w-6 text-gray-700' /></Link>
 
                     {/* Profile */}
                     <Link to='/profile' className='hover:text-black'><HiOutlineUser className='h-6 w-6 text-gray-700' /></Link>
