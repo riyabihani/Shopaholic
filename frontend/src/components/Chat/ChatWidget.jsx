@@ -1,65 +1,69 @@
 import React, { useMemo, useRef, useState } from "react";
 import ChatMessage from './ChatMessage'
+import { useDispatch, useSelector } from "react-redux";
+import { addUserMessage, fetchRecommendations } from "../../redux/slices/chatSlice";
 
-const MOCK_PRODUCTS = [
-  {
-    _id: "697147597a44fa2839e6618d",
-    name: "Classic Oxford Button-Down Shirt",
-    price: 59.99,
-    discountPrice: 34.99,
-    images: [{ url: "https://picsum.photos/seed/oxford/400/400", altText: "Oxford shirt" }],
-    sizes: ["S", "M", "L", "XL"],
-    colors: ["White", "Blue", "Navy"],
-    why: "Formal • Size M available • Under $60",
-  },
-  {
-    _id: "697147597a44fa2839e6618d",
-    name: "Relaxed Fit Chino Pants",
-    price: 64.99,
-    discountPrice: 49.99,
-    images: [{ url: "https://picsum.photos/seed/chino/400/400", altText: "Chinos" }],
-    sizes: ["M", "L", "XL"],
-    colors: ["Khaki", "Olive", "Black"],
-    why: "Comfy • Great for office • Multiple colors",
-  },
-  {
-    _id: "697147597a44fa2839e6618d",
-    name: "Minimal Crewneck Tee",
-    price: 24.99,
-    discountPrice: null,
-    images: [{ url: "https://picsum.photos/seed/tee/400/400", altText: "Tee" }],
-    sizes: ["XS", "S", "M", "L"],
-    colors: ["Black", "Gray", "White"],
-    why: "Casual staple • Soft cotton • Budget-friendly",
-  },
-  {
-    _id: "697147597a44fa2839e6618d",
-    name: "Vacation Linen Shirt",
-    price: 49.99,
-    discountPrice: 39.99,
-    images: [{ url: "https://picsum.photos/seed/linen/400/400", altText: "Linen shirt" }],
-    sizes: ["S", "M", "L"],
-    colors: ["Beige", "White", "Blue"],
-    why: "Breathable • Vacation vibe • Easy layering",
-  },
-];
+// const MOCK_PRODUCTS = [
+//   {
+//     _id: "697147597a44fa2839e6618d",
+//     name: "Classic Oxford Button-Down Shirt",
+//     price: 59.99,
+//     discountPrice: 34.99,
+//     images: [{ url: "https://picsum.photos/seed/oxford/400/400", altText: "Oxford shirt" }],
+//     sizes: ["S", "M", "L", "XL"],
+//     colors: ["White", "Blue", "Navy"],
+//     why: "Formal • Size M available • Under $60",
+//   },
+//   {
+//     _id: "697147597a44fa2839e6618d",
+//     name: "Relaxed Fit Chino Pants",
+//     price: 64.99,
+//     discountPrice: 49.99,
+//     images: [{ url: "https://picsum.photos/seed/chino/400/400", altText: "Chinos" }],
+//     sizes: ["M", "L", "XL"],
+//     colors: ["Khaki", "Olive", "Black"],
+//     why: "Comfy • Great for office • Multiple colors",
+//   },
+//   {
+//     _id: "697147597a44fa2839e6618d",
+//     name: "Minimal Crewneck Tee",
+//     price: 24.99,
+//     discountPrice: null,
+//     images: [{ url: "https://picsum.photos/seed/tee/400/400", altText: "Tee" }],
+//     sizes: ["XS", "S", "M", "L"],
+//     colors: ["Black", "Gray", "White"],
+//     why: "Casual staple • Soft cotton • Budget-friendly",
+//   },
+//   {
+//     _id: "697147597a44fa2839e6618d",
+//     name: "Vacation Linen Shirt",
+//     price: 49.99,
+//     discountPrice: 39.99,
+//     images: [{ url: "https://picsum.photos/seed/linen/400/400", altText: "Linen shirt" }],
+//     sizes: ["S", "M", "L"],
+//     colors: ["Beige", "White", "Blue"],
+//     why: "Breathable • Vacation vibe • Easy layering",
+//   },
+// ];
 
 const ChatWidget = () => {
+  const dispatch = useDispatch();
+  const { messages, loading } = useSelector((state) => state.chat);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState(() => [{
-    id: crypto.randomUUID(),
-    role: 'assistant',
-    text: "Tell me what you're looking for (bidget, size, color, vibe) and I will recommend products.",
-    products: []
-  }]);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [messages, setMessages] = useState(() => [{
+  //   id: crypto.randomUUID(),
+  //   role: 'assistant',
+  //   text: "Tell me what you're looking for (budget, size, color, vibe) and I will recommend products.",
+  //   products: []
+  // }]);
   const listRef = useRef(null);
   
   const canSend = useMemo(() => {
-    if (isLoading) return false;
+    if (loading) return false;
     if (!input.trim()) return false;
     return true;
-  }, [isLoading, input]);
+  }, [loading, input]);
 
   const scrollToBottom = () => {
     requestAnimationFrame(() => {
@@ -67,35 +71,17 @@ const ChatWidget = () => {
     });
   }
 
-  const onSend = (e, preset) => {
+  const onSend = async (e, preset) => {
     e.preventDefault();
     const text = (preset ?? input).trim();
-    if (!text || isLoading) return;
+    if (!text || loading) return;
     setInput("");
-    setIsLoading(true);
-
-    setMessages((prev) => [...prev, {
-      id: crypto.randomUUID(),
-      role: 'user',
-      text,
-      products: []
-    }]);
+    dispatch(addUserMessage(text))
     scrollToBottom();
 
-    // mock data
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          text: "Here are a few sample picks 👇 (mock data for UI)",
-          products: MOCK_PRODUCTS.slice(0, 4),
-        },
-      ]);
-      setIsLoading(false);
-      scrollToBottom();
-    }, 500);
+    await dispatch(fetchRecommendations({message: text}));
+   
+    scrollToBottom();
   };
 
   const starterPrompts = [
@@ -121,7 +107,7 @@ const ChatWidget = () => {
         {messages.map((m) => (
           <ChatMessage key={m.id} role={m.role} text={m.text} products={m.products} />
         ))}
-        {isLoading && <ChatMessage role='assistant' text='Thinking' products={[]} />}
+        {loading && <ChatMessage role='assistant' text='Thinking' products={[]} />}
       </div>
 
       {/* Input */}
